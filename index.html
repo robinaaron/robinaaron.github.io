@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robin A. Monecke - Digital Product Manager</title>
+    
+    <!-- n8n Demo Component -->
+    <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2.0.0/webcomponents-loader.js"></script>
+    <script src="https://www.unpkg.com/lit@2.0.0-rc.2/polyfill-support.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@n8n_io/n8n-demo-component/n8n-demo.bundled.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --purple: #a855f7;
+            --purple-dark: #7c3aed;
+            --purple-light: #c084fc;
+            --bg-light: #ffffff;
+            --text-light: #1a1a1a;
+            --text-secondary-light: #666666;
+            --bg-secondary-light: #f5f5f5;
+            --border-light: #e5e5e5;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-light: #0a0a0a;
+                --text-light: #e5e5e5;
+                --text-secondary-light: #a0a0a0;
+                --bg-secondary-light: #1a1a1a;
+                --border-light: #2a2a2a;
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-light);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Hero Section */
+        #hero {
+            justify-content: center;
+            position: relative;
+        }
+        
+        .hero-content h1 {
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .hero-content .subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--purple);
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-content .intro {
+            font-size: 1rem;
+            color: var(--text-secondary-light);
+            max-width: 600px;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--purple);
+            color: var(--purple);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            background: var(--purple);
+            color: var(--bg-light);
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: var(--purple);
+            color: var(--bg-light);
+        }
+        
+        .btn-primary:hover {
+            background: var(--purple-dark);
+            border-color: var(--purple-dark);
+        }
+        
+        /* Section Headers */
+        .section-header {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 600;
+            margin-bottom: 3rem;
+            color: var(--text-light);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60%;
+            height: 3px;
+            background: var(--purple);
+        }
+        
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+        
+        .about-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary-light);
+            line-height: 1.8;
+        }
+        
+        .about-text p {
+            margin-bottom: 1rem;
+        }
+        
+        .about-text .highlight {
+            color: var(--purple);
+            font-weight: 500;
+        }
+        
+        .skills-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .skill-category {
+            border-left: 3px solid var(--purple);
+            padding-left: 1rem;
+        }
+        
+        .skill-category h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .skill-category ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .skill-category li {
+            font-size: 0.85rem;
+            color: var(--text-secondary-light);
+            padding: 0.25rem 0;
+            position: relative;
+            padding-left: 1rem;
+        }
+        
+        .skill-category li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--purple);
+        }
+        
+        /* Project Section */
+        .project-showcase {
+            margin-top: 2rem;
+        }
+        
+        .project-intro {
+            margin-bottom: 2rem;
+            color: var(--text-secondary-light);
+            line-height: 1.8;
+        }
+        
+        .project-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .meta-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-secondary-light);
+            letter-spacing: 1px;
+        }
+        
+        .meta-value {
+            font-size: 0.95rem;
+            color: var(--purple);
+            font-weight: 500;
+        }
+        
+        .workflow-container {
+            background: var(--bg-secondary-light);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .workflow-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+        }
+        
+        n8n-demo {
+            display: block;
+            width: 100%;
+            min-height: 500px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .process-steps {
+            margin-top: 2rem;
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .step {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            min-width: 2rem;
+            height: 2rem;
+            background: var(--purple);
+            color: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .step-content {
+            flex: 1;
+            padding-top: 0.25rem;
+        }
+        
+        .step-content h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-light);
+        }
+        
+        .step-content p {
+            font-size: 0.85rem;
+            color: var(--text-secondary-light);
+        }
+        
+        /* Experience Section */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-light);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            padding-left: 1rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--purple);
+            border: 3px solid var(--bg-light);
+        }
+        
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--purple);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+        
+        .timeline-org {
+            font-size: 0.9rem;
+            color: var(--text-secondary-light);
+            margin-bottom: 0.75rem;
+        }
+        
+        .timeline-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary-light);
+            line-height: 1.6;
+        }
+        
+        .timeline-desc ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 0.5rem;
+        }
+        
+        .timeline-desc li {
+            padding-left: 1rem;
+            position: relative;
+            margin-bottom: 0.25rem;
+        }
+        
+        .timeline-desc li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--purple);
+        }
+        
+        /* Contact Section */
+        #contact {
+            min-height: 60vh;
+        }
+        
+        .contact-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .contact-text {
+            font-size: 1rem;
+            color: var(--text-secondary-light);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .contact-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .contact-link {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--purple);
+            color: var(--purple);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .contact-link:hover {
+            background: var(--purple);
+            color: var(--bg-light);
+            transform: translateY(-2px);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary-light);
+            border-top: 1px solid var(--border-light);
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 2rem;
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(var(--bg-light), 0.9);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            nav {
+                background: rgba(10, 10, 10, 0.9);
+            }
+        }
+        
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--purple);
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            section {
+                padding: 3rem 1.5rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                text-align: center;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .project-meta {
+                gap: 1rem;
+            }
+            
+            .timeline {
+                padding-left: 1.5rem;
+            }
+            
+            .workflow-container {
+                padding: 1rem;
+            }
+            
+            n8n-demo {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="#hero" class="logo">robin.monecke</a>
+            <button class="mobile-menu-btn">☰</button>
+            <ul class="nav-links">
+                <li><a href="#about">/about</a></li>
+                <li><a href="#project">/project</a></li>
+                <li><a href="#experience">/experience</a></li>
+                <li><a href="#contact">/contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="hero">
+        <div class="container">
+            <div class="hero-content fade-in">
+                <h1>Robin A. Monecke</h1>
+                <div class="subtitle">Digital Product Manager & Automation Engineer</div>
+                <p class="intro">
+                    Motivierter Student mit praktischer Erfahrung in Datenanalyse, 
+                    AI-Augmented Product Delivery und agiler Produktentwicklung. 
+                    Spezialisiert auf n8n-Workflow-Automation und intelligente B2B-Lösungen.
+                </p>
+                <div class="cta-buttons">
+                    <a href="#project" class="btn btn-primary">View Project</a>
+                    <a href="https://github.com/robinaaron/b2b-cross-selling-ai" target="_blank" class="btn">GitHub</a>
+                    <a href="#contact" class="btn">Get in Touch</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2 class="section-header fade-in">About Me</h2>
+            <div class="about-content">
+                <div class="about-text slide-in-left">
+                    <p>
+                        Ich studiere <span class="highlight">Digitales Produktmanagement (B.A.)</span> 
+                        an der Fachhochschule Nordhausen und entwickle praxisnah Lösungen 
+                        im Bereich Data Management und User Experience Design.
+                    </p>
+                    <p>
+                        Mein aktueller Schwerpunkt liegt auf <span class="highlight">AI-Augmented Product Delivery</span>, 
+                        wo ich Prototypen mit Chatbots, Bildgenerierung und intelligenten 
+                        Automatisierungsprozessen entwickle.
+                    </p>
+                    <p>
+                        Mit Erfahrung in agiler Team- und Organisationsentwicklung sowie 
+                        Prozessoptimierung bringe ich technische Expertise und 
+                        kommunikative Fähigkeiten zusammen.
+                    </p>
+                </div>
+                
+                <div class="skills-grid slide-in-right">
+                    <div class="skill-category">
+                        <h3>Development & Data</h3>
+                        <ul>
+                            <li>Java, SQL, MySQL</li>
+                            <li>NoSQL (MongoDB)</li>
+                            <li>R (ggplot2, dplyr)</li>
+                            <li>SPSS Statistics</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="skill-category">
+                        <h3>Tools & Platforms</h3>
+                        <ul>
+                            <li>n8n Workflow Automation</li>
+                            <li>Figma, Canva</li>
+                            <li>TYPO3, VS Code</li>
+                            <li>Google Workspace, M365</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="skill-category">
+                        <h3>Product Management</h3>
+                        <ul>
+                            <li>Agile Development</li>
+                            <li>UX/UI Design</li>
+                            <li>Process Optimization</li>
+                            <li>Digital Marketing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="project">
+        <div class="container">
+            <h2 class="section-header fade-in">Featured Project</h2>
+            
+            <div class="project-showcase">
+                <div class="project-intro fade-in">
+                    <p>
+                        Ein intelligentes Cross-Selling-System für Industrie-Produkte, 
+                        das mittels n8n-Workflow-Automation und KI-gestützter Analyse 
+                        automatisch kompatible Produktempfehlungen generiert.
+                    </p>
+                </div>
+                
+                <div class="project-meta fade-in">
+                    <div class="meta-item">
+                        <span class="meta-label">Projekt</span>
+                        <span class="meta-value">AI Cross-Selling System</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Tech Stack</span>
+                        <span class="meta-value">n8n, MySQL, AI</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Repository</span>
+                        <a href="https://github.com/robinaaron/b2b-cross-selling-ai" 
+                           target="_blank" 
+                           class="meta-value" 
+                           style="text-decoration: none;">
+                            View on GitHub ↗
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="workflow-container fade-in">
+                    <div class="workflow-title">n8n Workflow Visualization</div>
+                    <div id="workflow-loading" style="text-align: center; padding: 3rem; color: var(--text-secondary-light);">
+                        Loading workflow...
+                    </div>
+                    <n8n-demo 
+                        id="n8n-workflow"
+                        style="display: none;"
+                        frame="true">
+                    </n8n-demo>
+                </div>
+                
+                <div class="process-steps fade-in">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Produkteingabe</h4>
+                            <p>Lesen von Produktdaten aus MySQL-Datenbank (Tabelle: products)</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Datenvalidierung</h4>
+                            <p>Validierung und Regelprüfung der geladenen Produktdaten</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Katalogabgleich</h4>
+                            <p>Vergleich mit definiertem Produktportfolio (±50% Preis, gleiche Kategorie)</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Empfehlungserstellung</h4>
+                            <p>Generierung kompatibler Produktvorschläge mit Geschäftslogik</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h4>Datenspeicherung</h4>
+                            <p>Automatisches Schreiben der Ergebnisse in ai_analyses Tabelle</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience">
+        <div class="container">
+            <h2 class="section-header fade-in">Experience</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item slide-in-left">
+                    <div class="timeline-date">2022 - aktuell</div>
+                    <div class="timeline-title">B.A. Digitales Produktmanagement</div>
+                    <div class="timeline-org">Fachhochschule Nordhausen</div>
+                    <div class="timeline-desc">
+                        <p>Schwerpunkte: AI-Augmented Product Delivery, Data Management, UX Design</p>
+                        <ul>
+                            <li>Prototypentwicklung mit Chatbots und Bildgenerierung</li>
+                            <li>n8n-Workflow-Automation für B2B-Prozesse</li>
+                            <li>Agile Produktentwicklung und User Interface Design</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item slide-in-left">
+                    <div class="timeline-date">ab 2023</div>
+                    <div class="timeline-title">Diverse Nebentätigkeiten</div>
+                    <div class="timeline-org">Studienfinanzierung</div>
+                    <div class="timeline-desc">
+                        <ul>
+                            <li>Event-Betreuung bei Großveranstaltungen</li>
+                            <li>Servicekraft in der Gastronomie</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item slide-in-left">
+                    <div class="timeline-date">08/2020 - 07/2021</div>
+                    <div class="timeline-title">Kommunikation und Verwaltungsarbeit</div>
+                    <div class="timeline-org">Umweltamt, Landkreis Eichsfeld</div>
+                    <div class="timeline-desc">
+                        <ul>
+                            <li>Kommunikation von Emissions- und Naturschutzmaßnahmen</li>
+                            <li>Zusammenarbeit mit Agenturen bei Print- und Digitalkampagnen</li>
+                            <li>Datenbankverwaltung und Stakeholder-Korrespondenz</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item slide-in-left">
+                    <div class="timeline-date">09/2019 - 07/2020</div>
+                    <div class="timeline-title">Organisation und Sachbearbeitung (FSJ)</div>
+                    <div class="timeline-org">Bildungsamt, Landkreis Eichsfeld</div>
+                    <div class="timeline-desc">
+                        <ul>
+                            <li>Koordination pädagogischer Maßnahmen in Thüringen</li>
+                            <li>Reporting für Stakeholder aus Landespolitik</li>
+                            <li>Umsetzung Covid-19-Notfallstrategie</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item slide-in-left">
+                    <div class="timeline-date">2020 - 2024</div>
+                    <div class="timeline-title">Ehrenamtliches Engagement</div>
+                    <div class="timeline-org">Verschiedene Organisationen</div>
+                    <div class="timeline-desc">
+                        <ul>
+                            <li>Ordner bei Großveranstaltungen (2022-2024)</li>
+                            <li>Betreuung von Kindern (9-13 Jahre) inkl. Nachhilfe</li>
+                            <li>Freiwillige Feuerwehr Ershausen</li>
+                            <li>Thüringer Schachjugend e.V.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container">
+            <div class="contact-content fade-in">
+                <h2 class="section-header">Get in Touch</h2>
+                <p class="contact-text">
+                    Interesse an AI-Augmented Product Delivery, n8n-Automatisierung 
+                    oder digitalen Produktlösungen? Ich freue mich auf den Austausch.
+                </p>
+                <div class="contact-links">
+                    <a href="mailto:aaron.monecke@outlook.de" class="contact-link">
+                        <span>Email</span>
+                    </a>
+                    <a href="https://github.com/robinaaron" target="_blank" class="contact-link">
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2024 Robin A. Monecke. Built with n8n & passion for automation.</p>
+    </footer>
+
+    <script>
+        // Load workflow from external JSON file
+        async function loadWorkflow() {
+            try {
+                const response = await fetch('workflow.json');
+                if (!response.ok) {
+                    throw new Error('Failed to load workflow.json');
+                }
+                const workflowData = await response.json();
+                
+                // Set workflow data to n8n-demo component
+                const demoElement = document.getElementById('n8n-workflow');
+                const loadingElement = document.getElementById('workflow-loading');
+                
+                if (demoElement) {
+                    demoElement.setAttribute('workflow', JSON.stringify(workflowData));
+                    demoElement.style.display = 'block';
+                    if (loadingElement) {
+                        loadingElement.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading workflow:', error);
+                const loadingElement = document.getElementById('workflow-loading');
+                if (loadingElement) {
+                    loadingElement.innerHTML = '⚠️ Workflow konnte nicht geladen werden. Stelle sicher, dass workflow.json im selben Verzeichnis liegt.';
+                    loadingElement.style.color = 'var(--purple)';
+                }
+            }
+        }
+        
+        // Wait for n8n component to be ready
+        window.addEventListener('load', () => {
+            // Small delay to ensure n8n component is initialized
+            setTimeout(loadWorkflow, 500);
+        });
+        
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenuBtn?.addEventListener('click', () => {
+            if (navLinks.style.display === 'flex') {
+                navLinks.style.display = 'none';
+            } else {
+                navLinks.style.display = 'flex';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '100%';
+                navLinks.style.left = 0;
+                navLinks.style.right = 0;
+                navLinks.style.background = 'var(--bg-light)';
+                navLinks.style.padding = '1rem';
+                navLinks.style.borderTop = '1px solid var(--border-light)';
+            }
+        });
+    </script>
+</body>
+</html>
