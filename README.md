@@ -229,7 +229,6 @@ Frei zur persönlichen und kommerziellen Nutzung.
 **Robin A. Monecke**
 - Email: aaron.monecke@outlook.de
 - GitHub: [@robinaaron](https://github.com/robinaaron)
-- Telefon: +49 170 7376461
 
 ---
 
